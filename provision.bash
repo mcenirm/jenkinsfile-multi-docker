@@ -11,4 +11,6 @@ yum -q -y install yum-utils epel-release
 wget -nv -N -P /etc/yum.repos.d https://pkg.jenkins.io/redhat/jenkins.repo
 rpm --import https://pkg.jenkins.io/redhat/jenkins.io.key
 
+yum -q -y install java-1.8.0-openjdk-devel
+
 yum -q -y install jenkins
