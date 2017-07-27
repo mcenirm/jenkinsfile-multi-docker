@@ -14,6 +14,7 @@ wget -nv -N -P /etc/yum.repos.d https://pkg.jenkins.io/redhat/jenkins.repo
 rpm --import https://pkg.jenkins.io/redhat/jenkins.io.key
 
 provision_packages java-1.8.0-openjdk-devel git docker
+systemctl enable --now docker
 
 provision_packages jenkins
 systemctl start jenkins
