@@ -49,4 +49,24 @@ cat <<EOF
    | Passphrase  | (blank)                              |
    | ID          | localdocker                          |
    | Description | Local docker slave                   |
+
+== http://localhost:8080/computer/new
+   | Node name                      | localdocker                                               |
+   | (type)                         | Permanent Agent                                           |
+   ----------------------------------------------------------------------------------------------
+   | Name                           | localdocker                                               |
+   | Description                    | Local docker                                              |
+   | # of executors                 | 1                                                         |
+   | Remote root directory          | /var/lib/jenkins-docker/jenkins-root                      |
+   | Labels                         | docker                                                    |
+   | Usage                          | Only build jobs with label expressions matching this node |
+   | Launch method                  | Launch slave agents via SSH                               |
+   | Host                           | localhost                                                 |
+   | Credentials                    | jenkins-docker (Local docker slave)                       |
+   | Host Key Verification Strategy | Known hosts file Verification Strategy                    |
+   | Availability                   | Keep this agent online as much as possible                |
+   | Environment variables          | (unchecked)                                               |
+   | Tool Locations                 | (unchecked)                                               |
+
+== http://localhost:8080/computer/localdocker/log
 EOF
