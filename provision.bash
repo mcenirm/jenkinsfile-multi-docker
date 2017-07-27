@@ -24,6 +24,15 @@ provision_packages jenkins
 usermod -a -G dockerroot jenkins
 systemctl start jenkins
 
+tries_left=3
+while [ $tries_left -gt 0 ] ; do
+  if [ -s /var/lib/jenkins/secrets/initialAdminPassword ] ; then
+    break
+  fi
+  echo >&2 Waiting for initialAdminPassword... \[$tries_left\]
+  let tries_left--
+  sleep 2
+done
 initialAdminPassword=$(cat /var/lib/jenkins/secrets/initialAdminPassword)
 
 cat <<EOF
