@@ -37,6 +37,7 @@ fi
 if ! getent passwd jenkins-docker > /dev/null ; then
   useradd -M -r -c 'Jenkins slave for using Docker' -d /var/lib/jenkins-docker jenkins-docker
 fi
+usermod -a -G dockerroot jenkins-docker
 install -o jenkins-docker -g jenkins-docker -m 0700 -d ~jenkins-docker ~jenkins-docker/.ssh
 install -o jenkins-docker -g jenkins-docker -m 0600 ~jenkins/.ssh/id-localdocker.pub ~jenkins-docker/.ssh/authorized_keys
 
