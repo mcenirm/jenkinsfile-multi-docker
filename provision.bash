@@ -28,7 +28,21 @@ initialAdminPassword=$(cat /var/lib/jenkins/secrets/initialAdminPassword)
 
 cat <<EOF
 == http://localhost:8080/
-== initial admin password:  $initialAdminPassword
+ * Unlock Jenkins
+   | Administrator password | $initialAdminPassword |
+ * Customize Jenkins
+   [ Install suggested plugins ]
+ * Create First Admin User
+   [ Continue as admin ]
+ * Jenkins is ready!
+   [ Start using Jenkins ]
+
+== http://localhost:8080/pluginManager/available
+   (Optional) Use "Filter" to search for "blue ocean"
+   Check box for "Blue Ocean"
+   [ Download now and install after restart ]
+   Check box for "Restart Jenkins when installation is complete and no jobs are running"
+   Wait a few minutes for Jenkins to restart
 
 == http://localhost:8080/blue/create-pipeline
    | Where do you store your code? | Git            |

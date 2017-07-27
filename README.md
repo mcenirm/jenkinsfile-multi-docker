@@ -1,5 +1,2 @@
-1. `vagrant up` and/or `vagrant provision`
-1. Open http://localhost:8080/
-    1. Install recommended plugins
-    1. Continue as admin
-    1. Install Blue Ocean plugin
+1. `vagrant up` or `vagrant provision`
+1. Follow steps shown by provision script to configure Jenkins and establish a test pipeline
