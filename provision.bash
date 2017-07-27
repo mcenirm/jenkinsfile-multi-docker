@@ -16,3 +16,37 @@ rpm --import https://pkg.jenkins.io/redhat/jenkins.io.key
 provision_packages java-1.8.0-openjdk-devel
 
 provision_packages jenkins
+systemctl start jenkins
+
+if ! grep -q '^localhost ' /etc/ssh/ssh_known_hosts ; then
+  ssh-keyscan localhost >> /etc/ssh/ssh_known_hosts
+fi
+if ! grep -q localdocker ~jenkins/.ssh/id-localdocker.pub ; then
+  rm -f ~jenkins/.ssh/id-localdocker
+  sudo -u jenkins ssh-keygen -N '' -C localdocker -f ~jenkins/.ssh/id-localdocker
+fi
+
+if ! getent passwd jenkins-docker > /dev/null ; then
+  useradd -M -r -c 'Jenkins slave for using Docker' -d /var/lib/jenkins-docker jenkins-docker
+fi
+install -o jenkins-docker -g jenkins-docker -m 0700 -d ~jenkins-docker ~jenkins-docker/.ssh
+install -o jenkins-docker -g jenkins-docker -m 0600 ~jenkins/.ssh/id-localdocker.pub ~jenkins-docker/.ssh/authorized_keys
+
+sudo -u jenkins ssh -o LogLevel=QUIET -i ~jenkins/.ssh/id-localdocker jenkins-docker@localhost id
+
+initialAdminPassword=$(cat /var/lib/jenkins/secrets/initialAdminPassword)
+
+cat <<EOF
+== http://localhost:8080/
+== initial admin password:\  $initialAdminPassword
+
+== http://localhost:8080/credentials/store/system/domain/_/newCredentials
+   | Kind        | SSH Username with private key        |
+   | Scope       | System (Jenkins and nodes only)      |
+   | Username    | jenkins-docker                       |
+   | Private Key | From a file on Jenkins master        |
+   | File        | /var/lib/jenkins/.ssh/id-localdocker |
+   | Passphrase  | (blank)                              |
+   | ID          | localdocker                          |
+   | Description | Local docker slave                   |
+EOF
