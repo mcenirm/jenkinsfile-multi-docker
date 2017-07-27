@@ -18,8 +18,11 @@ provision_packages java-1.8.0-openjdk-devel
 provision_packages jenkins
 systemctl start jenkins
 
-if ! grep -q '^localhost ' ~jenkins/.ssh/known_hosts ; then
-  ssh-keyscan localhost |& sudo -u jenkins tee -a ~jenkins/.ssh/known_hosts > /dev/null
+if ! grep -q '^localhost ssh-rsa ' ~jenkins/.ssh/known_hosts ; then
+  if [ -f ~jenkins/.ssh/known_hosts ] ; then
+    sudo -u jenkins ssh-keygen -R localhost
+  fi
+  ssh-keyscan -t rsa localhost |& sudo -u jenkins tee -a ~jenkins/.ssh/known_hosts > /dev/null
 fi
 if ! grep -q localdocker ~jenkins/.ssh/id-localdocker.pub ; then
   rm -f ~jenkins/.ssh/id-localdocker
