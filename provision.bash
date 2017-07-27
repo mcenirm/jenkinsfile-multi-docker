@@ -20,7 +20,7 @@ if [ ! -f /etc/systemd/system/docker.service ] ; then
 fi
 systemctl enable --now docker
 
-usermod -a -G dockerroot jenkins-docker
+usermod -a -G dockerroot jenkins
 
 provision_packages jenkins
 systemctl start jenkins
