@@ -20,64 +20,16 @@ if [ ! -f /etc/systemd/system/docker.service ] ; then
 fi
 systemctl enable --now docker
 
+usermod -a -G dockerroot jenkins-docker
+
 provision_packages jenkins
 systemctl start jenkins
-
-if ! grep -q '^localhost ssh-rsa ' ~jenkins/.ssh/known_hosts ; then
-  if [ -f ~jenkins/.ssh/known_hosts ] ; then
-    sudo -u jenkins ssh-keygen -R localhost
-  fi
-  ssh-keyscan -t rsa localhost |& sudo -u jenkins tee -a ~jenkins/.ssh/known_hosts > /dev/null
-fi
-if ! grep -q localdocker ~jenkins/.ssh/id-localdocker.pub ; then
-  rm -f ~jenkins/.ssh/id-localdocker
-  sudo -u jenkins ssh-keygen -N '' -C localdocker -f ~jenkins/.ssh/id-localdocker
-fi
-
-if ! getent passwd jenkins-docker > /dev/null ; then
-  useradd -M -r -c 'Jenkins slave for using Docker' -d /var/lib/jenkins-docker jenkins-docker
-fi
-usermod -a -G dockerroot jenkins-docker
-install -o jenkins-docker -g jenkins-docker -m 0700 -d ~jenkins-docker ~jenkins-docker/.ssh
-install -o jenkins-docker -g jenkins-docker -m 0600 ~jenkins/.ssh/id-localdocker.pub ~jenkins-docker/.ssh/authorized_keys
-
-sudo -u jenkins ssh -o LogLevel=QUIET -i ~jenkins/.ssh/id-localdocker jenkins-docker@localhost id
 
 initialAdminPassword=$(cat /var/lib/jenkins/secrets/initialAdminPassword)
 
 cat <<EOF
 == http://localhost:8080/
 == initial admin password:  $initialAdminPassword
-
-== http://localhost:8080/credentials/store/system/domain/_/newCredentials
-   | Kind        | SSH Username with private key        |
-   | Scope       | System (Jenkins and nodes only)      |
-   | Username    | jenkins-docker                       |
-   | Private Key | From a file on Jenkins master        |
-   | File        | /var/lib/jenkins/.ssh/id-localdocker |
-   | Passphrase  | (blank)                              |
-   | ID          | localdocker                          |
-   | Description | Local docker slave                   |
-
-== http://localhost:8080/computer/new
-   | Node name                      | localdocker                                               |
-   | (type)                         | Permanent Agent                                           |
-   ----------------------------------------------------------------------------------------------
-   | Name                           | localdocker                                               |
-   | Description                    | Local docker                                              |
-   | # of executors                 | 1                                                         |
-   | Remote root directory          | /var/lib/jenkins-docker/jenkins-root                      |
-   | Labels                         | docker                                                    |
-   | Usage                          | Only build jobs with label expressions matching this node |
-   | Launch method                  | Launch slave agents via SSH                               |
-   | Host                           | localhost                                                 |
-   | Credentials                    | jenkins-docker (Local docker slave)                       |
-   | Host Key Verification Strategy | Known hosts file Verification Strategy                    |
-   | Availability                   | Keep this agent online as much as possible                |
-   | Environment variables          | (unchecked)                                               |
-   | Tool Locations                 | (unchecked)                                               |
-
-== http://localhost:8080/computer/localdocker/log
 
 == http://localhost:8080/blue/create-pipeline
    | Where do you store your code? | Git            |
