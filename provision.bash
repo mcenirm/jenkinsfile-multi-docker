@@ -38,7 +38,7 @@ initialAdminPassword=$(cat /var/lib/jenkins/secrets/initialAdminPassword)
 
 cat <<EOF
 == http://localhost:8080/
-== initial admin password:\  $initialAdminPassword
+== initial admin password:  $initialAdminPassword
 
 == http://localhost:8080/credentials/store/system/domain/_/newCredentials
    | Kind        | SSH Username with private key        |
