@@ -72,4 +72,9 @@ cat <<EOF
    | Tool Locations                 | (unchecked)                                               |
 
 == http://localhost:8080/computer/localdocker/log
+
+== http://localhost:8080/blue/create-pipeline
+   | Where do you store your code? | Git            |
+   | Repository URL                | /vagrant       |
+   | Credentials                   | System Default |
 EOF
