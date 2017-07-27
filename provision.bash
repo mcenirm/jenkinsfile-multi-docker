@@ -13,7 +13,7 @@ provision_packages yum-utils epel-release
 wget -nv -N -P /etc/yum.repos.d https://pkg.jenkins.io/redhat/jenkins.repo
 rpm --import https://pkg.jenkins.io/redhat/jenkins.io.key
 
-provision_packages java-1.8.0-openjdk-devel
+provision_packages java-1.8.0-openjdk-devel git
 
 provision_packages jenkins
 systemctl start jenkins
