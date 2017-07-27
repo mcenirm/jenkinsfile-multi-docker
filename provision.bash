@@ -14,6 +14,10 @@ wget -nv -N -P /etc/yum.repos.d https://pkg.jenkins.io/redhat/jenkins.repo
 rpm --import https://pkg.jenkins.io/redhat/jenkins.io.key
 
 provision_packages java-1.8.0-openjdk-devel git docker
+if [ ! -f /etc/systemd/system/docker.service ] ; then
+  systemctl disable --now docker
+  sed -e '/^ExecReload=/s#.*#ExecStartPost=/usr/bin/chown dockerroot:dockerroot /var/run/docker.sock\n&#' < /usr/lib/systemd/system/docker.service > /etc/systemd/system/docker.service
+fi
 systemctl enable --now docker
 
 provision_packages jenkins
